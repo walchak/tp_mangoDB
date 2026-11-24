@@ -25,3 +25,31 @@ function getMongoDbManager(): Database
     return $client->selectDatabase($_ENV['MDB_DB']);
 }
 
+function getRedisClient(): ?Predis\Client
+{
+    if (($_ENV['REDIS_ENABLE'] ?? 'false') !== 'true') {
+        return null;
+    }
+
+    return new Predis\Client([
+        'scheme' => 'tcp',
+        'host'   => $_ENV['REDIS_HOST'],
+        'port'   => (int) $_ENV['REDIS_PORT'],
+    ]);
+}
+
+function clearListCache(): void
+{
+    $redis = getRedisClient();
+    if ($redis && ($keys = $redis->keys('manuscrits:*'))) {
+        $redis->del($keys);
+    }
+}
+
+function getElasticSearchClient(): \Elastic\Elasticsearch\Client
+{
+    return \Elastic\Elasticsearch\ClientBuilder::create()
+        ->setHosts([$_ENV['ELASTIC_HOST']])
+        ->build();
+}
+

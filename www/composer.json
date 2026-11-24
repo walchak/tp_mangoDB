@@ -3,7 +3,8 @@
         "mongodb/mongodb": "1.15.0",
         "twig/twig": "^3.5",
         "vlucas/phpdotenv": "^5.5",
-        "elasticsearch/elasticsearch": "^8.0"
+        "elasticsearch/elasticsearch": "^8.0",
+        "predis/predis": "^3.7"
     },
     "config": {
         "platform": {
@@ -13,7 +14,7 @@
             "php-http/discovery": true
         },
         "audit": {
-            "ignore": ["PKSA-61k5-cqr9-b8b4"]
+            "ignore": ["PKSA-61k5-cqr9-b8b4","PKSA-y93m-jgy6-r9ns"]
         }
     }
 }

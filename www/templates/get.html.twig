@@ -1,7 +1,15 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Document ""{% endblock %}
+{% block title %}Détail du manuscrit{% endblock %}
 {% block content %}
-    <p>&larr;&nbsp;<a href="/index.php">Retourner Ã  la liste</a></p>
-    affichez le contenu d'un document de la liste
+<h1>Detail du manuscrit</h1>
+<table>
+    {% for champ, valeur in document %}
+    <tr>
+        <th>{{ champ }}</th>
+        <td>{{ valeur is iterable ? valeur|json_encode : valeur }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<p><a href="app.php">Retour a la liste</a></p>
 {% endblock %}

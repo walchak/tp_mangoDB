@@ -1,20 +1,19 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Modification d'un livre{% endblock %}
+{% block title %}Modification d'un manuscrit{% endblock %}
 {% block content %}
-<p>&larr;&nbsp;<a href="/index.php">Retourner à la liste</a></p>
+<h1>Modifier le manuscrit</h1>
 <form action="/update.php" method="post">
-        <input type="hidden" id="id" name="id" value="{{ entity._id }}">
+    <input type="hidden" name="id" value="{{ entity._id }}">
 
-        <label for="title">Titre :</label>
-        <input type="text" id="title" name="title" value="récupérez la valeur depuis mongodb" size="100">
+    <p><label>Référence : <input type="text" name="cote" value="{{ entity.cote ?? '' }}"></label></p>
+    <p><label>Titre : <input type="text" name="titre" value="{{ entity.titre ?? '' }}" size="100"></label></p>
+    <p><label>Auteur : <input type="text" name="auteur" value="{{ entity.auteur ?? '' }}" size="50"></label></p>
+    <p><label>Langue : <input type="text" name="langue" value="{{ entity.langue ?? '' }}"></label></p>
+    <p><label>Siècle : <input type="text" name="siecle" value="{{ entity.siecle ?? '' }}"></label></p>
+    <p><label>Édition : <input type="text" name="edition" value="{{ entity.edition ?? '' }}" size="50"></label></p>
 
-        <label for="author">Auteur :</label>
-        <input type="text" id="author" name="author" size="50" value="récupérez la valeur depuis mongodb">
-
-        <label for="author">Siècle :</label>
-        <input type="number" id="century" name="century" value="123456879">
-
-        <button type="submit">Enregistrer</button>
+    <button type="submit">Enregistrer</button>
 </form>
+<p><a href="/">Retour à la liste</a></p>
 {% endblock %}

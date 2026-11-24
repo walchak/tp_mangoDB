@@ -1,22 +1,56 @@
-{% extends "base.html.twig" %}
+    {% extends "base.html.twig" %}
 
 {% block title %}Index{% endblock %}
 {% block content %}
 <h1>Liste des manuscrits de la bibliothèque du Patrimoine de Clermont Auvergne Métropole</h1>
+<p><a href="create.php">Ajouter un manuscrit</a></p>
+
+<form method="get" action="/">
+    <input type="text" name="q" value="{{ q }}" placeholder="Titre ou auteur..." size="40">
+    <button type="submit">Rechercher</button>
+    {% if q %}
+        &nbsp;{{ total }} résultat(s) pour « {{ q }} » &nbsp;<a href="/">Effacer</a>
+    {% endif %}
+</form>
+
 <table>
     <tr>
         <th>Référence</th>
         <th>Titre</th>
         <th>Auteur</th>
+        <th>Langue</th>
+        <th>Siecle</th>
+        <th>Edition</th>
         <th>Actions</th>
     </tr>
-    {% for document in list %}
+        {% for document in list %}
     <tr>
-        <td>{{ document.name }}</td>
-        <td>{{ document.name }}</td>
-        <td>{{ document.name }}</td>
-        <td><a href="get.php?id=1">voir</a>&nbsp;/&nbsp;<a href="edit.php?id=1">éditer</a>&nbsp;/&nbsp;<a href="delete.php?id=1">supprimer</a></td>
+        <td>{{ document.cote ?? '-' }}</td>
+        <td>{{ document.titre ?? '-' }}</td>
+        <td>{{ document.auteur ?? '-' }}</td>
+        <td>{{ document.langue ?? '-'}}</td>
+        <td>{{ document.siecle ?? '-'}}</td>
+        <td>{{ document.edition ?? '-'}}</td>
+
+        <td>
+            <a href="get.php?id={{ document._id }}">voir</a>&nbsp;/&nbsp;
+            <a href="edit.php?id={{ document._id }}">Editer</a>&nbsp;/&nbsp;
+            <a href="delete.php?id={{ document._id }}" onclick="return confirm('Supprimer ce manuscrit ?');">supprimer</a>
+        </td>
     </tr>
     {% endfor %}
 </table>
+
+{% set qs = q ? '&q=' ~ (q|url_encode) : '' %}
+<div class="pagination">
+    {% if page > 1 %}
+        <a href="?page=1{{ qs }}">« Première</a> &nbsp;
+        <a href="?page={{ page - 1 }}{{ qs }}">‹ Précédente</a> &nbsp;
+    {% endif %}
+    Page {{ page }} / {{ nbPages }} ({{ total }} manuscrits)
+    {% if page < nbPages %}
+        &nbsp; <a href="?page={{ page + 1 }}{{ qs }}">Suivante ›</a>
+        &nbsp; <a href="?page={{ nbPages }}{{ qs }}">Dernière »</a>
+    {% endif %}
+</div>
 {% endblock %}

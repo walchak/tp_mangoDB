@@ -8,17 +8,31 @@ use Twig\Error\SyntaxError;
 
 $twig = getTwig();
 $manager = getMongoDbManager();
+$collection = $manager->selectCollection('tp');
 
-// petite aide : https://github.com/VSG24/mongodb-php-examples
+$champs = ['cote', 'titre', 'auteur', 'langue', 'siecle', 'edition'];
+$erreur = null;
 
-if (!empty($_POST)) {
-    // @todo coder l'enregistrement d'un nouveau livre en lisant le contenu de $_POST
-} else {
-// render template
-    try {
-        echo $twig->render('create.html.twig');
-    } catch (LoaderError|RuntimeError|SyntaxError $e) {
-        echo $e->getMessage();
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $document = [];
+    foreach ($champs as $champ) {
+        $document[$champ] = trim($_POST[$champ] ?? '');
+    }
+
+    if ($document['titre'] === '') {
+        $erreur = 'Le titre est obligatoire.';
+    } else {
+        $result = $collection->insertOne($document);
+if ($redis = getRedisClient()) {
+    clearListCache();
+}
+header('Location: get.php?id=' . $result->getInsertedId());
+exit;
     }
 }
 
+try {
+    echo $twig->render('create.html.twig', ['erreur' => $erreur]);
+} catch (LoaderError|RuntimeError|SyntaxError $e) {
+    echo $e->getMessage();
+}

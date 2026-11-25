@@ -46,7 +46,7 @@ L'application est écrite en **PHP 8.3** avec **Twig** (templates) et **phpdotenv
 | Kibana | `tpmongo-kibana` | 5601 |
 | Elasticvue | `elasticvue` | 8180 |
 
-> CAPTURE 1 : `captures/01_docker_ps.png`**
+
 > Le résultat de `docker ps --format "table {{.Names}}\t{{.Status}}"` montrant tous les conteneurs `Up`.
 
 ![Conteneurs Docker](captures/01_docker_ps.png)
@@ -96,12 +96,12 @@ $list = $collection->find([], [
 ])->toArray();
 ```
 
-> CAPTURE 2 : `captures/02_liste.png`**
+
 > La page http://localhost:8080 avec le tableau des manuscrits.
 
 ![Liste des manuscrits](captures/02_liste.png)
 
-> CAPTURE 3 : `captures/03_pagination.png`**
+
 > Le bas de la page avec « Page X / 141 (2818 manuscrits) » et les liens Première / Précédente / Suivante / Dernière.
 
 ![Pagination](captures/03_pagination.png)
@@ -117,17 +117,17 @@ $list = $collection->find([], [
 
 Après un ajout, l'utilisateur est redirigé vers la fiche du livre créé (`get.php?id=<insertedId>`). Cela a été réutilisé dans le scénario k6 pour récupérer l'identifiant du livre créé.
 
-> CAPTURE 4 : `captures/04_detail.png`**
+
 > La fiche détail d'un manuscrit (`get.php?id=...`).
 
 ![Fiche détail](captures/04_detail.png)
 
-> CAPTURE 5 : `captures/05_ajout.png`**
+
 > Le formulaire « Ajouter un manuscrit » rempli.
 
 ![Ajout](captures/05_ajout.png)
 
-> CAPTURE 6 : `captures/06_edition.png`**
+
 > Le formulaire de modification pré-rempli (`edit.php?id=...`).
 
 ![Édition](captures/06_edition.png)
@@ -185,7 +185,7 @@ function clearListCache(): void
 }
 ```
 
-> CAPTURE 7 : `captures/07_redis_commander.png`**
+
 > Redis Commander (http://localhost:8081) avec `KEYS manuscrits:*` et `GET manuscrits:count` ? `"2818"`, montrant le cache rempli.
 
 ![Redis Commander](captures/07_redis_commander.png)
@@ -226,13 +226,13 @@ Les logs complets sont dans le dépôt : [`test_no_cache.txt`](test_no_cache.txt) 
 | Requêtes / seconde | 13,4 | 13,4 | n/a |
 | Itérations | 166 | 166 | n/a |
 
-> CAPTURE 8 : `captures/08_grafana_sans_cache.png`**
+
 > Le tableau de bord k6 dans Grafana (http://localhost:3000) sur la période du test **sans cache**.
 > (Les panneaux « Virtual Users », « Errors » et « Checks » du tableau de bord importé n'affichent pas de données avec cette version de Grafana. Les panneaux de requêtes et de `http_req_duration` sont fonctionnels.)
 
 ![Grafana sans cache](captures/08_grafana_sans_cache.png)
 
-> CAPTURE 9 : `captures/09_grafana_avec_cache.png`**
+
 > Le même tableau de bord sur la période du test **avec cache**.
 
 ![Grafana avec cache](captures/09_grafana_avec_cache.png)
@@ -299,12 +299,12 @@ Chaîne de l'analyseur `fr`, appliquée aux champs `titre` et `auteur` :
 | 5 | `stop` (_french_) | Supprime les mots vides | `eloges` `blaise` `pascal` |
 | 6 | `stemmer` (light_french) | Réduit à la racine | `elog` `blais` `pascal` |
 
-> CAPTURE 10 : `captures/10_es_count.png`**
+
 > http://localhost:9200/manuscrits/_count ? `{"count":2818,...}` (ou l'index dans Elasticvue).
 
 ![Index ElasticSearch](captures/10_es_count.png)
 
-> CAPTURE 11 : `captures/11_kibana_analyze.png`**
+
 > Kibana ? Dev Tools, résultat de :
 > `POST manuscrits/_analyze { "analyzer": "fr", "text": "L'Éloges de Blaise Pasqalsss", "explain": true }`
 > (on y voit les tokens après chaque filtre).
@@ -335,29 +335,29 @@ Un formulaire GET (`?q=...`) a été ajouté au-dessus de la liste. Quand des mots-
 
 ### 4.4 Démonstrations
 
-> CAPTURE 12 : `captures/12_recherche_titre.png`**
+
 > Recherche `Missale` (mot du titre).
 
 ![Recherche titre](captures/12_recherche_titre.png)
 
-> CAPTURE 13 : `captures/13_recherche_auteur.png`**
+
 > Recherche `Lafuma` (nom d'auteur).
 
 ![Recherche auteur](captures/13_recherche_auteur.png)
 
-> CAPTURE 14 : `captures/14_recherche_faute.png`**
+
 > Recherche `paskal` ? 30 résultats contenant « Pascal » (faute de frappe tolérée).
 
 ![Faute de frappe](captures/14_recherche_faute.png)
 
-> CAPTURE 15 : `captures/15_recherche_pluriel.png`**
+
 > Recherche `éloges` ? « Éloge de Blaise Pascal » est trouvé (pluriel ? singulier).
 
 ![Pluriel](captures/15_recherche_pluriel.png)
 
 **Cas intéressant :** la recherche `pasqalsss` renvoie aussi des résultats, alors qu'elle semble contenir plus de deux erreurs. Le terme est d'abord **analysé** : le stemmer retire le `s` final du pluriel et réduit les lettres doublées, ce qui donne `pasqals`. Il ne reste alors que **2 modifications** pour obtenir `pascal` (`q`?`c`, suppression du `s`), ce qui est toléré pour un mot de 7 lettres. La tolérance s'applique donc **après** l'analyse. Une valeur plus stricte (`fuzziness: "AUTO:4,8"`) n'accepterait qu'une erreur pour les mots de 4 à 7 lettres.
 
-> CAPTURE 16 : `captures/16_kibana_explain.png`**
+
 > Kibana ? `GET manuscrits/_search` avec `"explain": true` pour `pasqalsss`, montrant le terme trouvé (`titre:pascal`), le calcul BM25 et le boost.
 
 ![Explain](captures/16_kibana_explain.png)

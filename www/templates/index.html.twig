@@ -4,7 +4,7 @@
 {% block content %}
 <h1>Liste des manuscrits de la bibliothèque du Patrimoine de Clermont Auvergne Métropole</h1>
 <p><a href="create.php">Ajouter un manuscrit</a></p>
-
+<p>
 <form method="get" action="/">
     <input type="text" name="q" value="{{ q }}" placeholder="Titre ou auteur..." size="40">
     <button type="submit">Rechercher</button>
@@ -12,6 +12,7 @@
         &nbsp;{{ total }} résultat(s) pour « {{ q }} » &nbsp;<a href="/">Effacer</a>
     {% endif %}
 </form>
+</p>
 
 <table>
     <tr>
